@@ -1,4 +1,25 @@
 [profile.default]
+# Soldeer installs ONE version per package name, so a vendored source that
+# imports an older prefix is aliased onto the installed one. Lives here rather
+# than in `remappings.txt` because `forge soldeer` owns that file and
+# regenerates it from the installed set.
+#
+# `rain-tofu-erc20-decimals` 0.1.1 and `rainlang` 0.1.2 ship test/script sources
+# importing `rain-deploy-0.1.2/src/lib/LibRainDeploy.sol`; `etchZoltuFactory`
+# and `deployZoltu` are unchanged in 0.1.8.
+#
+# `rain-deploy` 0.1.8 imports `forge-std-1.16.2`, while every other dependency
+# here imports `forge-std-1.16.1`. One of the two prefixes has to be an alias;
+# the installed package is the newer 1.16.2, so the 1.16.1 consumers are the
+# ones aliased forward rather than 0.1.8 being aliased back onto a forge-std
+# that predates it.
+#
+# Test/script-only either way: nothing under `src/` reaches rain-deploy, so no
+# bytecode moves.
+remappings = [
+  "rain-deploy-0.1.2/=dependencies/rain-deploy-0.1.8/",
+  "forge-std-1.16.1/=dependencies/forge-std-1.16.2/",
+]
 libs = ["dependencies"]
 
 solc = "0.8.25"
@@ -21,11 +42,39 @@ cbor_metadata = false
 arbitrum = "${ARBITRUM_RPC_URL}"
 base = "${BASE_RPC_URL}"
 base_sepolia = "${BASE_SEPOLIA_RPC_URL}"
+ethereum = "${ETHEREUM_RPC_URL}"
 flare = "${FLARE_RPC_URL}"
+hyperevm = "${HYPEREVM_RPC_URL}"
+robinhood = "${ROBINHOOD_RPC_URL}"
+bsc = "${BSC_RPC_URL}"
 polygon = "${POLYGON_RPC_URL}"
 
+# `rainix-manual-sol-artifacts` passes `--verify` by default and exports exactly
+# these variable names, so a deploy without this section broadcasts and then
+# fails with no API key configured for the chain. One entry per
+# `[rpc_endpoints]` alias, because the deploy goes to all of them.
+#
+# "chain" is stated on the entries whose alias foundry does not itself resolve
+# to a chain, as foundry raises a config error for an unknown alias with
+# neither "chain" nor "url".
+[etherscan]
+arbitrum = { key = "${CI_DEPLOY_ARBITRUM_ETHERSCAN_API_KEY}" }
+base = { key = "${CI_DEPLOY_BASE_ETHERSCAN_API_KEY}" }
+base_sepolia = { key = "${CI_DEPLOY_BASE_SEPOLIA_ETHERSCAN_API_KEY}" }
+ethereum = { key = "${CI_DEPLOY_ETHEREUM_ETHERSCAN_API_KEY}", chain = 1 }
+flare = { key = "${CI_DEPLOY_FLARE_ETHERSCAN_API_KEY}" }
+hyperevm = { key = "${CI_DEPLOY_HYPEREVM_ETHERSCAN_API_KEY}", chain = 999 }
+# Robinhood Chain (4663) is not indexed by Etherscan V2. Its Blockscout speaks
+# the Etherscan API, so the entry points there (the key is ignored). That
+# explorer has rejected non-browser clients, so if `--verify` fails there,
+# verify afterwards through Sourcify: `forge verify-contract --verifier
+# sourcify --chain 4663 ...`.
+robinhood = { key = "${CI_DEPLOY_ROBINHOOD_ETHERSCAN_API_KEY}", chain = 4663, url = "https://robinhoodchain.blockscout.com/api" }
+bsc = { key = "${CI_DEPLOY_BSC_ETHERSCAN_API_KEY}", chain = 56 }
+polygon = { key = "${CI_DEPLOY_POLYGON_ETHERSCAN_API_KEY}" }
+
 [dependencies]
-forge-std = "1.16.1"
+forge-std = "1.16.2"
 "@openzeppelin-contracts" = "5.6.1"
 rainlang = "0.1.2"
 "rain-interpreter-interface" = "0.1.0"
@@ -33,7 +82,7 @@ rainlang = "0.1.2"
 "rain-sol-codegen" = "0.1.0"
 "rain-math-float" = "0.1.1"
 "rain-lib-typecast" = "0.1.0"
-"rain-deploy" = "0.1.4"
+"rain-deploy" = "0.1.8"
 "rain-extrospection" = "0.1.0"
 "rain-intorastring" = "0.1.0"
 "rain-lib-hash" = "0.1.0"

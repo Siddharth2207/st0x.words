@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {Script} from "forge-std-1.16.1/src/Script.sol";
+import {Script} from "forge-std-1.16.2/src/Script.sol";
 import {LibERC4626SubParser} from "src/lib/parse/LibERC4626SubParser.sol";
 
 /// @title ERC4626 SubParser Authoring Meta
