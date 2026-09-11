@@ -2,17 +2,17 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {Script} from "forge-std-1.16.1/src/Script.sol";
+import {Script} from "forge-std-1.16.2/src/Script.sol";
 import {ERC4626Words} from "../src/concrete/ERC4626Words.sol";
 import {IMetaBoardV1_2} from "rain-metadata-0.1.0/src/interface/unstable/IMetaBoardV1_2.sol";
 import {LibDescribedByMeta} from "rain-metadata-0.1.0/src/lib/LibDescribedByMeta.sol";
-import {LibRainDeploy} from "rain-deploy-0.1.4/src/lib/LibRainDeploy.sol";
+import {LibRainDeploy} from "rain-deploy-0.1.8/src/lib/LibRainDeploy.sol";
 import {DEPLOYED_ADDRESS, BYTECODE_HASH} from "../src/generated/ERC4626Words.pointers.sol";
 
 /// @dev Deterministic MetaBoard address deployed via Zoltu factory, identical
 /// on every supported network.
 /// https://github.com/rainlanguage/rain.metadata
-address constant METABOARD_ADDRESS = 0xfb8437AeFBB8031064E274527C5fc08e30Ac6928;
+address constant METABOARD_ADDRESS = 0x8fD50fF9Db9835ba1B61394752A26F53D721D2a1;
 
 /// @title Deploy
 /// Deploys `ERC4626Words` deterministically via the Zoltu factory to every

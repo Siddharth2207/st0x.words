@@ -106,7 +106,8 @@ and fails with `git diff --exit-code` if any committed file has drifted.
 
 ```sh
 ARBITRUM_RPC_URL=<url> BASE_RPC_URL=<url> BASE_SEPOLIA_RPC_URL=<url> \
-  FLARE_RPC_URL=<url> POLYGON_RPC_URL=<url> \
+  BSC_RPC_URL=<url> ETHEREUM_RPC_URL=<url> FLARE_RPC_URL=<url> \
+  HYPEREVM_RPC_URL=<url> POLYGON_RPC_URL=<url> ROBINHOOD_RPC_URL=<url> \
   DEPLOYMENT_KEY=<private-key> \
   forge script script/Deploy.sol --slow --broadcast --verify
 ```
@@ -117,8 +118,15 @@ There is no `--rpc-url`: the script selects each network's fork itself from the
 Or trigger the **Manual sol artifacts** GitHub Actions workflow from the Actions
 tab. There is no network selection: the deploy script deterministically deploys
 via the Zoltu factory to every rain supported network (arbitrum, base,
-base_sepolia, flare, polygon), skipping networks where the deterministic address
-already has code, and emits the described-by meta to the MetaBoard.
+base_sepolia, bsc, ethereum, flare, hyperevm, polygon, robinhood), skipping
+networks where the deterministic address already has code, and emits the
+described-by meta to the MetaBoard.
+
+Robinhood Chain (4663) is not indexed by Etherscan V2, so `--verify` there goes
+to its Blockscout and can fail while the deploy itself lands. A failed run is
+not a failed deploy: check `DEPLOYED_ADDRESS` on chain before re-dispatching,
+and verify after the fact with
+`forge verify-contract --verifier sourcify --chain 4663 ...`.
 
 Deploying is a **manual dispatch, decoupled from merging**. Nothing in this
 repository asserts that any network has been deployed, and no test reads chain
@@ -139,8 +147,10 @@ when the script finishes.
 Secrets for the Manual sol artifacts deploy workflow are consumed by the rainix
 reusable and reach it via `secrets: inherit`: `PRIVATE_KEY` (the deployer key),
 `RPC_URL_<NETWORK>_FORK` for each deployed network (`ARBITRUM`, `BASE`,
-`BASE_SEPOLIA`, `FLARE`, `POLYGON` — a repo/org variable of the same name also
-works, and the reusable's preflight binds the reachable one to
-`<NETWORK>_RPC_URL`), `EXPLORER_VERIFICATION_KEY` for Etherscan-family
-verification, and `CI_DEPLOY_FLARE_ETHERSCAN_API_KEY` for Flare, which is not
-Etherscan. The CI workflows also use `CACHIX_AUTH_TOKEN` (org-level).
+`BASE_SEPOLIA`, `BSC`, `ETHEREUM`, `FLARE`, `HYPEREVM`, `POLYGON`, `ROBINHOOD` —
+a repo/org variable of the same name also works, and where neither is set the
+reusable's preflight falls back to its own default candidate list; either way it
+binds the reachable one to `<NETWORK>_RPC_URL`), `EXPLORER_VERIFICATION_KEY` for
+Etherscan-family verification, and `CI_DEPLOY_FLARE_ETHERSCAN_API_KEY` for
+Flare, which is not Etherscan. The CI workflows also use `CACHIX_AUTH_TOKEN`
+(org-level).

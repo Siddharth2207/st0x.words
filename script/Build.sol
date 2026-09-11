@@ -2,14 +2,14 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {Script} from "forge-std-1.16.1/src/Script.sol";
+import {Script} from "forge-std-1.16.2/src/Script.sol";
 import {ERC4626Words} from "src/concrete/ERC4626Words.sol";
 import {LibFs} from "rain-sol-codegen-0.1.0/src/lib/LibFs.sol";
 import {LibCodeGen} from "rain-sol-codegen-0.1.0/src/lib/LibCodeGen.sol";
 import {LibGenParseMeta} from "rain-interpreter-interface-0.1.0/src/lib/codegen/LibGenParseMeta.sol";
 import {LibERC4626SubParser} from "src/lib/parse/LibERC4626SubParser.sol";
 import {PARSE_META_BUILD_DEPTH} from "src/abstract/ERC4626SubParser.sol";
-import {LibRainDeploy} from "rain-deploy-0.1.4/src/lib/LibRainDeploy.sol";
+import {LibRainDeploy} from "rain-deploy-0.1.8/src/lib/LibRainDeploy.sol";
 
 contract Build is Script {
     /// @notice Generates the Solidity constant declaration for the
